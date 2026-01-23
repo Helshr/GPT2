@@ -16,6 +16,7 @@ class MultiHeadAttention(nn.Module):
         super().__init__()
         assert (d_out % num_heads) == 0, "d_out must be divisible by num_heads"
         self.heads = num_heads
+        self.d_out = d_out
         self.head_dim = d_out // num_heads
         self.W_query = nn.Linear(d_in, d_out, bias=qkv_bias)
         self.W_key = nn.Linear(d_in, d_out, bias=qkv_bias)
@@ -47,7 +48,7 @@ class MultiHeadAttention(nn.Module):
         
         context_vec = attn_weights @ values
         context_vec = context_vec.transpose(1, 2)
-        context_vec = context_vec.contiguous().view(b, num_tokens, d_out)
+        context_vec = context_vec.contiguous().view(b, num_tokens, self.d_out)
         return self.out_proj(context_vec)
 
         
